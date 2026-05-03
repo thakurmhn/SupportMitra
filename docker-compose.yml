@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: supportmitra
+      POSTGRES_USER: supportmitra
+      POSTGRES_PASSWORD: supportmitra_pass
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command: gunicorn supportmitra.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    environment:
+      DJANGO_SETTINGS_MODULE: supportmitra.settings
+      DATABASE_URL: postgres://supportmitra:supportmitra_pass@db:5432/supportmitra
+      SECRET_KEY: changeme
+      DEBUG: '1'
+    ports:
+      - 8000:8000
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 5173:5173
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+
+volumes:
+  db-data:
