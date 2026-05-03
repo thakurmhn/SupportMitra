@@ -28,7 +28,7 @@ This repository contains:
    - Backend API: http://localhost:8000/api/
    - Frontend app: http://localhost:5173/
 
-## Notes
+### Notes
 
 - The backend uses Django, DRF, JWT auth, and a simple ticket model.
 - The frontend is an initial React + Tailwind shell ready for next-phase integration.
